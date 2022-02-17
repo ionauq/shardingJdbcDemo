@@ -19,6 +19,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     private DataSource readWriteDataSource;
 
+    private JdbcTemplate jdbcTemplateWithRawDataSource;
+
     private String INSERT_SQL = "INSERT INTO t_order (user_id, address_id, status) VALUES (?, ?, ?)";
 
 
@@ -65,10 +67,31 @@ public class OrderRepositoryImpl implements OrderRepository {
         return id;
     }
 
+    @Override
+    public long JdbcTemplateWithRawDataSourceTest(Order order) {
+        long id = 0L;
+        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+        try {
+            jdbcTemplateWithRawDataSource.update((conn) -> {
+                PreparedStatement ps = conn.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS);
+                ps.setLong(1, order.getUserId());
+                ps.setLong(2, order.getAddressId());
+                ps.setString(3, order.getStatus());
+                return ps;
+            }, keyHolder);
+
+            id = keyHolder.getKey().longValue();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return id;
+    }
+
 
     @Autowired
-    public OrderRepositoryImpl(JdbcTemplate jdbcTemplate, DataSource readWriteDataSource) {
+    public OrderRepositoryImpl(JdbcTemplate jdbcTemplate, DataSource readWriteDataSource, JdbcTemplate jdbcTemplateWithRawDataSource) {
         this.jdbcTemplate = jdbcTemplate;
         this.readWriteDataSource = readWriteDataSource;
+        this.jdbcTemplateWithRawDataSource = jdbcTemplateWithRawDataSource;
     }
 }

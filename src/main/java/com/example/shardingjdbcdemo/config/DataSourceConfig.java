@@ -25,6 +25,11 @@ public class DataSourceConfig {
     }
 
     @Bean
+    public JdbcTemplate jdbcTemplateWithRawDataSource(){
+        return new JdbcTemplate(this.rawDataSource());
+    }
+
+    @Bean(name = "readWriteDataSource")
     public DataSource readWriteDataSource() throws SQLException {
         HikariDataSource masterDataSource = new HikariDataSource();
         masterDataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
@@ -46,5 +51,15 @@ public class DataSourceConfig {
         dataSourceMap.put(MASTER, masterDataSource);
         dataSourceMap.put(SLAVE, slaveDataSource);
         return ShardingSphereDataSourceFactory.createDataSource(dataSourceMap, Collections.singleton(ruleConfig), properties);
+    }
+
+    @Bean(name = "rawDataSource")
+    public DataSource rawDataSource() {
+        HikariDataSource masterDataSource = new HikariDataSource();
+        masterDataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        masterDataSource.setJdbcUrl("jdbc:mysql://localhost:3306/test_db?useSSL=false");
+        masterDataSource.setUsername("root");
+        masterDataSource.setPassword("123456");
+        return masterDataSource;
     }
 }

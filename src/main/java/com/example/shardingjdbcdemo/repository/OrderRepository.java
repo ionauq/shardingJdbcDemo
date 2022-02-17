@@ -7,4 +7,6 @@ public interface OrderRepository {
     long jdbcTemplateTest(Order order);
 
     long rawJdbcTest(Order order);
+
+    long JdbcTemplateWithRawDataSourceTest(Order order);
 }

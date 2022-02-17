@@ -1,5 +1,5 @@
 
-init database and table
+## init database and table
 
 ```sql
 DROP DATABASE IF EXISTS test_db;
@@ -13,3 +13,7 @@ CREATE TABLE t_order (
     PRIMARY KEY (order_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
+
+## run the unit test
+
+`OrderRepositoryImplTest.java`
